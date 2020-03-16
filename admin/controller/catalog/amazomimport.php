@@ -59,48 +59,49 @@ class ControllerCatalogAmazomimport extends Controller {
 		$xpath = new \DOMXpath($dom);
   		$articles = $xpath->query('//div[@class="sg-col-20-of-24 sg-col-28-of-32 sg-col-16-of-20 sg-col sg-col-32-of-36 sg-col-8-of-12 sg-col-12-of-16 sg-col-24-of-28"]/div[@class="sg-col-inner"]/span[@class="rush-component s-latency-cf-section"]/div[@class="s-result-list s-search-results sg-row"]/div[@class="sg-col-20-of-24 s-result-item sg-col-0-of-12 sg-col-28-of-32 sg-col-16-of-20 sg-col sg-col-32-of-36 sg-col-12-of-16 sg-col-24-of-28"]/div[@class="sg-col-inner"]/span/div[@class="s-include-content-margin s-border-bottom"]/div/div[@class="sg-row"]');
 		$links = [];
+		$price = [];
 		
 		//print_r($articles->item(0));
+		$i = 0;
+		$ij = 0;
 		  foreach($articles as $container) {
-		  	
-			  	$childImage = $xpath->query('.//div[@class="sg-col-4-of-24 sg-col-4-of-12 sg-col-4-of-36 sg-col-4-of-28 sg-col-4-of-16 sg-col sg-col-4-of-20 sg-col-4-of-32"]/div/div/span/a/div/img[@class="s-image"]', $container);
-
-			if($childImage->length == 1){
-			  	print_r($container);
-			  	$childInfo = $xpath->query('.//div[@class="sg-col-4-of-12 sg-col-8-of-16 sg-col-16-of-24 sg-col-12-of-20 sg-col-24-of-32 sg-col sg-col-28-of-36 sg-col-20-of-28"]', $container);
-			}
-		  	/*
-		  	$child = $xpath->query('.//div[@class="sg-row"]', $container);
-
-		  	foreach($child as $containerchild) {
-
-			  	$child2 = $xpath->query('.//div[@class="sg-col-4-of-24 sg-col-4-of-12 sg-col-4-of-36 sg-col-4-of-28 sg-col-4-of-16 sg-col sg-col-4-of-20 sg-col-4-of-32"]/div[@class="sg-col-inner"]/div[@class="a-section a-spacing-none"]', $containerchild);
-
-			  	
-
-			  	foreach ($child2 as $keyChild => $valueChild) {
-			  		$image = $xpath->query('.//div[@class="a-section a-spacing-none"]', $valueChild);
-			  		$info = $xpath->query('.//span[@class="a-offscreen"]', $valueChild);
-			  		print_r($info->item(1));
-			  		$href = $valueChild->getElementsByTagName("a")->item(0);
-			  		$obj = $valueChild->getElementsByTagName("img")->item(0);
-			  		$name = (isset($obj->attributes) && @$obj->attributes > 0 ? @$obj->getAttribute("alt") : "");
-			  		$src = (isset($obj->attributes) && @$obj->attributes > 0 ? @$obj->getAttribute("src") : "");
-			  		if(trim($name) && trim($src) && $name != "Black"){
-			  			list($dataUrl,$fx) = explode( '/ref',$href->getAttribute("href"));
-				  		$links[] = [
-					        'href' => "https://www.amazon.com".$dataUrl,
-					        'name' => $name,
-					        'src'	=> $src
-					      ];
-					}
+		  		
+			  	$childImage = $xpath->query('.//div[@class="sg-col-4-of-24 sg-col-4-of-12 sg-col-4-of-36 sg-col-4-of-28 sg-col-4-of-16 sg-col sg-col-4-of-20 sg-col-4-of-32"]/div/div/span/a[@class="a-link-normal"]', $container);
+			  	foreach ($childImage as $key => $value) {
+			  		$childInfoLink = $xpath->query('.//div/img[@class="s-image"]', $value);
+			  		
+			  		list($dataUrl,$fx) = explode( '/ref',$value->getAttribute("href"));
+			  		foreach ($childInfoLink as $keyInfoLink => $valueInfoLink) {
+			  			
+			  			if($valueInfoLink->tagName == "img"){
+				  			
+					  		$links[$i] = [
+						        'href' => "https://www.amazon.com".$dataUrl,
+						        'name' => $valueInfoLink->getAttribute("alt"),
+						        'src'	=> $valueInfoLink->getAttribute("src")
+						      ];
+						    $i++;
+					  	}
+			  		}
 			  		
 			  	}
-			  }
-			*/
+			  	$childInfo = $xpath->query('.//div[@class="sg-col-4-of-12 sg-col-8-of-16 sg-col-16-of-24 sg-col-12-of-20 sg-col-24-of-32 sg-col sg-col-28-of-36 sg-col-20-of-28"]', $container);
+			  	foreach ($childInfo as $key => $value) {
+			  		
+			  		$childInfoPrice = $xpath->query('.//span[@class="a-price"]/span[@class="a-offscreen"]', $value);
+			  		foreach ($childInfoPrice as $keyPrice => $valuePrice) {
+			  			
+			  			$links[$ij] = array_merge($links[$ij],["price" => $valuePrice->nodeValue]);
+			  			$ij++;
+			  		}
+			  		
+			  	}
+			
+		  	
 		    
 			
 		  }
+		
 		//echo $dom->saveHTML();
 		header('Content-Type: application/json');
 		echo json_encode($links);

@@ -151,7 +151,7 @@ $(".btnSearch").on("click", function(){
               html += '        <tr>';
               html += '          <td><img src="'+item.src+'" style="width:100px;"></td>';
               html += '          <td><a href="'+item.href+'">'+item.name+'</a></td>';
-              html += '          <td>Price</td>';
+              html += '          <td>'+item.price+'</td>';
               html += '          <td class="text-right">';
               html += '            <button class="btn btn-primary btn-sm" onClick="callImport(\''+item.href+'\');">Add</button>';
               html += '          </td>';
