@@ -20,4 +20,5 @@ return array(
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Cardinity\\' => array($vendorDir . '/cardinity/cardinity-sdk-php/src'),
     '' => array($vendorDir . '/klarna/kco_rest/src'),
+    
 );

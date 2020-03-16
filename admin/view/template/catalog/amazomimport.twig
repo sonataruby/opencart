@@ -1,0 +1,219 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      
+      <h1>Amazom Import Product</h1>
+      
+    </div>
+  </div>
+  <div class="container-fluid">
+  	<div class="row">
+  		<div class="col-sm-9">
+  			<div class="panel panel-default">
+	          <div class="panel-heading">
+	            <h3 class="panel-title">Product Import Options</h3>
+	          </div>
+	          <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-6">
+    				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-product" class="form-horizontal">
+
+  	          		<div class="form-group">
+  		                <label class="col-sm-2 control-label" for="input-category"><span data-toggle="tooltip" title="{{ help_category }}">Category</span></label>
+  		                <div class="col-sm-10">
+  		                  <input type="text" name="category" value="" placeholder="{{ entry_category }}" id="input-category" class="form-control"/>
+  		                  <div id="product-category" class="well well-sm" style="height: 150px; overflow: auto;"> {% for product_category in product_categories %}
+  		                      <div id="product-category{{ product_category.category_id }}"><i class="fa fa-minus-circle"></i> {{ product_category.name }}
+  		                        <input type="hidden" name="product_category[]" value="{{ product_category.category_id }}"/>
+  		                      </div>
+  		                    {% endfor %}</div>
+  		                </div>
+  		              </div>
+
+                      
+                  </form>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="input-tag{{ language.language_id }}">Append Price</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="offprice" value="0" class="form-control"/>
+                  </div>
+                </div>
+            </div>
+            </div>
+
+	          </div>
+	        </div>
+
+          <div id="ReportAjax"></div>
+	        <div class="panel panel-default">
+	          <div class="panel-heading">
+	            <h3 class="panel-title">Export Info</h3>
+	          </div>
+	          <div class="panel-body" id="loadproducts">
+	          	<table class="table">
+	          		<tr>
+	          			<td>Image</td>
+	          			<td>Name</td>
+	          			<td>Price</td>
+	          			<td class="text-right">
+	          				<button class="btn btn-primary btn-sm">Add</button>
+	          			</td>
+	          		</tr>
+	          	</table>
+	          </div>
+	        </div>
+  		</div>
+
+  		<div class="col-sm-3">
+  			<div class="panel panel-default">
+	          <div class="panel-heading">
+	            <h3 class="panel-title">Amazom Info</h3>
+	          </div>
+	          <div class="panel-body">
+
+	          	<div class="form-group">
+                  <label class="control-label" for="AmazomURL">Keyword</label>
+                  <input type="text" name="amazom[url]" id="keywordSearch" value="" placeholder="Enter Keyword" class="form-control"/>
+                </div>
+
+                
+
+                <div class="form-group">
+                	<button class="btn btn-primary btn-sm btnSearch">Call Action</button>
+                </div>
+	          </div>
+	        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Get Info</h3>
+            </div>
+            <div class="panel-body">
+
+              <div class="form-group">
+                  <label class="control-label" for="AmazomURL">Product URL</label>
+                  <input type="text"  id="ProductURL" value="" placeholder="Enter Keyword" class="form-control"/>
+                </div>
+
+                
+
+                <div class="form-group">
+                  <button class="btn btn-primary btn-sm btnDetail">Call Action Detail</button>
+                </div>
+            </div>
+          </div>
+
+
+  		</div>
+  	</div>
+  </div>
+</div>
+
+
+<link href="view/javascript/codemirror/lib/codemirror.css" rel="stylesheet"/>
+  <link href="view/javascript/codemirror/theme/monokai.css" rel="stylesheet"/>
+  <script type="text/javascript" src="view/javascript/codemirror/lib/codemirror.js"></script>
+  <script type="text/javascript" src="view/javascript/codemirror/lib/xml.js"></script>
+  <script type="text/javascript" src="view/javascript/codemirror/lib/formatting.js"></script>
+  <script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
+  <link href="view/javascript/summernote/summernote.css" rel="stylesheet"/>
+  <script type="text/javascript" src="view/javascript/summernote/summernote-image-attributes.js"></script>
+  <script type="text/javascript" src="view/javascript/summernote/opencart.js"></script>
+<script type="text/javascript"><!--
+$(".btnSearch").on("click", function(){
+    
+    var keyword = $("#keywordSearch").val();
+    if(keyword == ""){
+      alert("Enter Keyword");
+      $("#keywordSearch").focus();
+    }else{
+    $("#loadproducts").html("Loadding...");
+    alert('index.php?route=catalog/amazomimport&action=search&keyword='+keyword+'&user_token={{ user_token }}');
+    $.ajax({
+        url: 'index.php?route=catalog/amazomimport&action=search&keyword='+keyword+'&user_token={{ user_token }}',
+        dataType: 'json',
+        success: function(json) {
+          var html = '<table class="table">';
+              html += '        <tr>';
+              html += '          <td>Image</td>';
+              html += '          <td>Name</td>';
+              html += '          <td>Price</td>';
+              html += '          <td class="text-right">';
+              html += '            <button class="btn btn-primary btn-sm">Add</button>';
+              html += '          </td>';
+              html += '        </tr>';
+
+
+          $.each(json, function(i, item){
+              html += '        <tr>';
+              html += '          <td><img src="'+item.src+'" style="width:100px;"></td>';
+              html += '          <td><a href="'+item.href+'">'+item.name+'</a></td>';
+              html += '          <td>Price</td>';
+              html += '          <td class="text-right">';
+              html += '            <button class="btn btn-primary btn-sm" onClick="callImport(\''+item.href+'\');">Add</button>';
+              html += '          </td>';
+              html += '        </tr>';
+          });
+          html += '      </table>';
+          $("#loadproducts").html(html);
+        }
+      });
+    
+    }
+
+});
+
+$(".btnDetail").on("click", function(){
+    var url = $("#ProductURL").val();
+    callImport(url);
+    return false;
+});
+
+$('input[name=\'category\']').autocomplete({
+    'source': function(request, response) {
+      $.ajax({
+        url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+        dataType: 'json',
+        success: function(json) {
+          response($.map(json, function(item) {
+            return {
+              label: item['name'],
+              value: item['category_id']
+            }
+          }));
+        }
+      });
+    },
+    'select': function(item) {
+      $('input[name=\'category\']').val('');
+
+      $('#product-category' + item['value']).remove();
+
+      $('#product-category').append('<div id="product-category' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_category[]" value="' + item['value'] + '" /></div>');
+    }
+  });
+$('#product-category').delegate('.fa-minus-circle', 'click', function() {
+    $(this).parent().remove();
+  });
+
+function callImport(url){
+  var catalog = "";
+  var offprice = 0;
+  $('input[name^="product_category"]').each(function() {
+      catalog += $(this).val()+"|";
+  });
+  offprice = $("#offprice").val();
+  $("#ReportAjax").html("Wait Insert Content");
+  $.ajax({
+        url: 'index.php?route=catalog/amazomimport&action=info&url='+url+'&catalog='+catalog+'&offprice='+offprice+'&user_token={{ user_token }}',
+        dataType: 'json',
+        success: function(json) {
+          $("#ReportAjax").html("Content Insert ok");
+        }
+  });
+}
+//--></script>
+{{ footer }}
