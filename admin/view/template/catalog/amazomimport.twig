@@ -131,7 +131,7 @@ $(".btnSearch").on("click", function(){
       $("#keywordSearch").focus();
     }else{
     $("#loadproducts").html("Loadding...");
-    alert('index.php?route=catalog/amazomimport&action=search&keyword='+keyword+'&user_token={{ user_token }}');
+    
     $.ajax({
         url: 'index.php?route=catalog/amazomimport&action=search&keyword='+keyword+'&user_token={{ user_token }}',
         dataType: 'json',
